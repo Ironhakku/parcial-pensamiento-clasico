@@ -550,43 +550,50 @@ function scheduleAutoAdvance(qi) {
 
 function genNotas() {
   const pts = estado.puntajes||{}, grps = estado.grupos||{};
+  // Build ranking to get nota by group name
   const ord = Object.entries(pts).sort((a,b)=>b[1]-a[1]);
-  let rows = '', csv = [['Puesto','Grupo','Integrantes','Puntos','Nota /5.0']];
-  ord.forEach(([n,p], i) => {
-    const nt = getNota(i+1), info = grps[n]||{}, mb = (info.miembros||[]).join(' / ');
-    rows += `<tr>
-      <td style="padding:6px 8px;font-family:var(--font-display);font-size:12px;color:var(--uv-gold);text-align:center;">${i+1}°</td>
-      <td style="padding:6px 8px;font-family:var(--font-mono);font-size:11px;color:var(--uv-cyan);">${n}</td>
-      <td style="padding:6px 8px;font-size:11px;color:rgba(200,220,255,0.7);">${mb}</td>
-      <td style="padding:6px 8px;text-align:center;font-family:var(--font-mono);">${p}</td>
-      <td style="padding:6px 8px;text-align:center;font-family:var(--font-display);font-weight:700;color:${nt>=3?'#00ff88':'#ff6b6b'}">${nt.toFixed(1)}</td>
+  const notaByGrupo = {};
+  const ptsByGrupo = {};
+  const puestoByGrupo = {};
+  ord.forEach(([g,p],i) => { notaByGrupo[g]=getNota(i+1); ptsByGrupo[g]=p; puestoByGrupo[g]=i+1; });
+  // Grupos sin puntos: nota = 2.0 (último puesto)
+  Object.keys(grps).forEach(g => {
+    if (!ptsByGrupo[g]) { notaByGrupo[g]=2.0; ptsByGrupo[g]=0; puestoByGrupo[g]='-'; }
+  });
+  // Build student → group map
+  const grupoDeEstudiante = {};
+  Object.entries(grps).forEach(([gn, info]) => {
+    (info.miembros||[]).forEach(est => { grupoDeEstudiante[est] = gn; });
+  });
+
+  // One row per student, in ESTUDIANTES order
+  let rows = '', csv = [['N°','Estudiante','Grupo','Puntos','Nota Parcial /5.0']];
+  ESTUDIANTES.forEach((est, idx) => {
+    const grupo = grupoDeEstudiante[est] || '';
+    const pts2 = grupo ? (ptsByGrupo[grupo] || 0) : '';
+    const nota = grupo ? notaByGrupo[grupo].toFixed(1) : '';
+    const notaColor = nota ? (parseFloat(nota)>=3?'#00ff88':'#ff6b6b') : 'rgba(200,220,255,0.3)';
+    rows += `<tr style="border-bottom:1px solid rgba(0,212,255,0.06);">
+      <td style="padding:5px 8px;font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.4);text-align:center;">${idx+1}</td>
+      <td style="padding:5px 8px;font-size:11px;color:${grupo?'#e8f4ff':'rgba(200,220,255,0.35)'};">${est}</td>
+      <td style="padding:5px 8px;font-family:var(--font-mono);font-size:10px;color:var(--uv-cyan);opacity:${grupo?'1':'0.3'};">${grupo||'—'}</td>
+      <td style="padding:5px 8px;text-align:center;font-family:var(--font-mono);font-size:10px;color:rgba(200,220,255,0.7);">${pts2}</td>
+      <td style="padding:5px 8px;text-align:center;font-family:var(--font-display);font-size:12px;font-weight:700;color:${notaColor};">${nota}</td>
     </tr>`;
-    csv.push([i+1, n, mb, p, nt.toFixed(1)]);
+    csv.push([idx+1, est, grupo, pts2, nota]);
   });
-  // Grupos sin puntos
-  Object.entries(grps).forEach(([n,info]) => {
-    if (!pts[n]) {
-      const idx = ord.length + 1, nt = getNota(idx), mb = (info.miembros||[]).join(' / ');
-      rows += `<tr>
-        <td style="padding:6px 8px;font-family:var(--font-display);font-size:12px;color:rgba(200,220,255,0.4);text-align:center;">—</td>
-        <td style="padding:6px 8px;font-family:var(--font-mono);font-size:11px;color:rgba(0,212,255,0.4);">${n}</td>
-        <td style="padding:6px 8px;font-size:11px;color:rgba(200,220,255,0.4);">${mb}</td>
-        <td style="padding:6px 8px;text-align:center;font-family:var(--font-mono);color:rgba(200,220,255,0.4);">0</td>
-        <td style="padding:6px 8px;text-align:center;font-family:var(--font-display);font-weight:700;color:#ff6b6b">2.0</td>
-      </tr>`;
-      csv.push(['-', n, mb, 0, '2.0']);
-    }
-  });
+
   document.getElementById('tabla-notas').innerHTML = `
+    <div style="font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.4);margin-bottom:0.6rem;letter-spacing:1px;">ORDEN: LISTADO OFICIAL · ${ESTUDIANTES.length} ESTUDIANTES · Casilla vacía = 0</div>
     <table style="width:100%;border-collapse:collapse;">
       <thead><tr style="border-bottom:2px solid rgba(0,212,255,0.2);">
-        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.5);font-weight:400;text-align:center;">#</th>
-        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.5);font-weight:400;">GRUPO</th>
-        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.5);font-weight:400;">INTEGRANTES</th>
-        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.5);font-weight:400;text-align:center;">PTS</th>
-        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.5);font-weight:400;text-align:center;">NOTA</th>
+        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:9px;color:rgba(0,212,255,0.5);font-weight:400;text-align:center;">N°</th>
+        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:9px;color:rgba(0,212,255,0.5);font-weight:400;">ESTUDIANTE</th>
+        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:9px;color:rgba(0,212,255,0.5);font-weight:400;">GRUPO</th>
+        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:9px;color:rgba(0,212,255,0.5);font-weight:400;text-align:center;">PTS</th>
+        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:9px;color:rgba(0,212,255,0.5);font-weight:400;text-align:center;">NOTA /5.0</th>
       </tr></thead>
-      <tbody>${rows||'<tr><td colspan="5" style="padding:1rem;text-align:center;opacity:0.4;">Sin datos</td></tr>'}</tbody>
+      <tbody>${rows}</tbody>
     </table>`;
   window._csv = csv;
 }
