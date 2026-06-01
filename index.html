@@ -197,12 +197,7 @@ const PREGUNTAS_RAW = [
   {p:"¿Qué factor determina si la IA sirve como instrumento de control o de liberación en una organización?",o:["El nivel de inversión en tecnología","La filosofía gerencial que guía su implementación","La velocidad de adopción tecnológica","El tamaño de la empresa"],c:1,s:13,t:"IA"}
 ];
 
-function shuffleQuestion(q) {
-  const correct = q.o[q.c];
-  const shuffled = [...q.o].sort(() => Math.random() - 0.5);
-  return { ...q, o: shuffled, c: shuffled.indexOf(correct) };
-}
-const PREGUNTAS = PREGUNTAS_RAW.map(shuffleQuestion);
+const PREGUNTAS = PREGUNTAS_RAW;
 
 const ESTUDIANTES = [
   "ALZATE RESTREPO VALENTINA","BOTERO MORALES NATALIA","CAICEDO ACEVEDO YULIANA",
