@@ -3,23 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pensamiento Clásico — Parcial S11-13</title>
+<title>Pensamiento Clásico — Parcial S11–13</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0d0f1a; color: #f0ead8; font-family: 'Georgia', serif; }
-.hidden { display: none !important; }
-button { cursor: pointer; font-family: inherit; }
+:root {
+  --uv-blue: #003087;
+  --uv-red: #C8102E;
+  --uv-gold: #F5A623;
+  --uv-cyan: #00D4FF;
+  --uv-green: #00FF88;
+  --uv-dark: #00091A;
+  --uv-mid: #001433;
+  --uv-panel: rgba(0,20,51,0.85);
+  --uv-border: rgba(0,212,255,0.25);
+  --uv-glow: 0 0 20px rgba(0,212,255,0.3);
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Exo 2', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--uv-dark); color: #e8f4ff; font-family: var(--font-body); min-height: 100vh; overflow-x: hidden; }
+.starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 20% 50%, rgba(0,48,135,0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.2) 0%, transparent 40%),
+    radial-gradient(ellipse at 60% 80%, rgba(0,212,255,0.1) 0%, transparent 40%), #00091A; }
+.star { position: absolute; border-radius: 50%; background: #fff; animation: twinkle var(--d) ease-in-out infinite alternate; }
+@keyframes twinkle { from { opacity: 0.1; } to { opacity: 0.8; } }
+.grid-overlay { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.04;
+  background-image: linear-gradient(rgba(0,212,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,1) 1px, transparent 1px);
+  background-size: 60px 60px; }
+.scan-line { position: fixed; left: 0; right: 0; height: 2px; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.6), transparent);
+  animation: scan 8s linear infinite; }
+@keyframes scan { from { top: -2px; } to { top: 100vh; } }
+#app { position: relative; z-index: 2; min-height: 100vh; }
+.panel { background: var(--uv-panel); border: 1px solid var(--uv-border); border-radius: 12px;
+  backdrop-filter: blur(12px); box-shadow: var(--uv-glow), inset 0 1px 0 rgba(255,255,255,0.05); }
+.corner-deco { position: relative; }
+.corner-deco::before, .corner-deco::after { content: ''; position: absolute; width: 16px; height: 16px; border-color: var(--uv-cyan); border-style: solid; }
+.corner-deco::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.corner-deco::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+.display-title { font-family: var(--font-display); font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase;
+  background: linear-gradient(135deg, #fff 0%, var(--uv-cyan) 50%, var(--uv-gold) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--uv-cyan); opacity: 0.7; }
+.pulse-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--uv-cyan); animation: pulse-glow 1.5s ease-in-out infinite; }
+@keyframes pulse-glow { 0%,100% { box-shadow: 0 0 4px var(--uv-cyan); opacity: 1; } 50% { box-shadow: 0 0 16px var(--uv-cyan), 0 0 32px var(--uv-cyan); opacity: 0.6; } }
+.btn-primary { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  padding: 0.5rem 1.2rem; background: linear-gradient(135deg, var(--uv-blue), var(--uv-cyan)); color: #fff;
+  border: none; border-radius: 6px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,212,255,0.4); }
+.btn-secondary { font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px; padding: 0.45rem 0.9rem;
+  background: transparent; color: var(--uv-cyan); border: 1px solid rgba(0,212,255,0.3); border-radius: 6px; cursor: pointer;
+  transition: background 0.2s; }
+.btn-secondary:hover { background: rgba(0,212,255,0.1); }
+.btn-danger { font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px; padding: 0.45rem 0.9rem;
+  background: transparent; color: #ff6b6b; border: 1px solid rgba(200,16,46,0.3); border-radius: 6px; cursor: pointer; }
+.btn-notes { font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px; padding: 0.45rem 0.9rem;
+  background: transparent; color: #90d890; border: 1px solid rgba(144,216,144,0.3); border-radius: 6px; cursor: pointer; }
+.answer-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 0.9rem 1rem;
+  background: rgba(0,20,51,0.7); border: 1px solid rgba(0,212,255,0.2); border-radius: 10px;
+  color: #e8f4ff; font-family: var(--font-body); font-size: 0.9rem; text-align: left; cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.1s; line-height: 1.4; }
+.answer-btn:hover { background: rgba(0,48,135,0.5); border-color: rgba(0,212,255,0.5); transform: translateX(4px); }
+.answer-btn .letter-badge { min-width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--uv-blue), rgba(0,212,255,0.3)); border-radius: 6px;
+  font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--uv-cyan);
+  border: 1px solid rgba(0,212,255,0.3); }
+.answer-btn.answered { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+.result-correct { background: linear-gradient(135deg, rgba(0,200,100,0.15), rgba(0,212,255,0.1));
+  border: 1px solid rgba(0,200,100,0.4); border-radius: 12px; padding: 2rem; text-align: center; }
+.result-wrong { background: linear-gradient(135deg, rgba(200,16,46,0.15), rgba(255,100,100,0.1));
+  border: 1px solid rgba(200,16,46,0.4); border-radius: 12px; padding: 2rem; text-align: center; }
+.progress-bar { height: 4px; background: rgba(0,212,255,0.1); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--uv-blue), var(--uv-cyan));
+  border-radius: 2px; transition: width 0.3s ease; box-shadow: 0 0 8px var(--uv-cyan); }
+
+/* TIMER */
+.timer-ring { transform: rotate(-90deg); }
+.timer-circle-bg { fill: none; stroke: rgba(0,212,255,0.1); stroke-width: 4; }
+.timer-circle { fill: none; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.5s; }
+.timer-number { font-family: var(--font-display); font-weight: 900; }
+
+/* COMBO badge */
+.combo-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;
+  background: linear-gradient(135deg, rgba(245,166,35,0.3), rgba(255,100,0,0.2));
+  border: 1px solid rgba(245,166,35,0.5); border-radius: 20px; animation: combo-pulse 0.8s ease-in-out infinite alternate; }
+@keyframes combo-pulse { from { box-shadow: 0 0 8px rgba(245,166,35,0.3); } to { box-shadow: 0 0 20px rgba(245,166,35,0.7); } }
+
+/* RANKING item */
+.rank-item { display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; border-radius: 8px; margin-bottom: 4px; border: 1px solid transparent; }
+.rank-item.rank-1 { background: rgba(245,166,35,0.15); border-color: rgba(245,166,35,0.3); }
+.rank-item.rank-2 { background: rgba(192,192,192,0.1); border-color: rgba(192,192,192,0.2); }
+.rank-item.rank-3 { background: rgba(205,127,50,0.1); border-color: rgba(205,127,50,0.2); }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; z-index: 999; background: rgba(0,9,26,0.92);
+  backdrop-filter: blur(8px); display: flex; align-items: flex-start; justify-content: center;
+  padding: 2rem; overflow-y: auto; }
+.modal-box { width: 100%; max-width: 720px; background: var(--uv-mid);
+  border: 1px solid rgba(0,212,255,0.2); border-radius: 16px; padding: 1.5rem;
+  box-shadow: 0 0 60px rgba(0,48,135,0.5); }
+
+/* RULES SCREEN */
+.rule-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid rgba(0,212,255,0.08); }
+.rule-icon { font-size: 1.4rem; min-width: 32px; text-align: center; margin-top: 2px; }
+.rule-text { font-size: 0.88rem; color: rgba(200,220,255,0.85); line-height: 1.5; }
+.rule-text strong { color: var(--uv-cyan); font-family: var(--font-mono); font-size: 11px; }
+
+/* WAITING ROOM */
+.waiting-group { display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+  background: rgba(0,20,51,0.5); border: 1px solid rgba(0,212,255,0.15); border-radius: 8px; margin-bottom: 4px; }
+
+/* PROJECTOR specific */
+.projector-question { font-family: var(--font-body); font-size: clamp(1.4rem,3vw,2.2rem);
+  font-weight: 600; line-height: 1.4; color: #f0f8ff; }
+.projector-option { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1.2rem;
+  background: rgba(0,20,51,0.6); border: 1px solid rgba(0,212,255,0.15); border-radius: 10px;
+  font-size: clamp(0.85rem,1.6vw,1rem); color: #c0d8f0; }
+.projector-option .opt-letter { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--uv-cyan); min-width: 28px; }
+
+/* ANIMATIONS */
+@keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fade-in  { from { opacity: 0; } to   { opacity: 1; } }
+@keyframes glow-pulse { 0%,100% { text-shadow: 0 0 20px rgba(0,212,255,0.4); } 50% { text-shadow: 0 0 60px rgba(0,212,255,0.8); } }
+@keyframes timer-warn { 0%,100% { color: var(--uv-gold); } 50% { color: var(--uv-red); } }
+.animate-up { animation: slide-up 0.5s ease forwards; }
+.glow-text { animation: glow-pulse 3s ease-in-out infinite; }
 </style>
 </head>
 <body>
+<div class="starfield" id="starfield"></div>
+<div class="grid-overlay"></div>
+<div class="scan-line"></div>
 <div id="app"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, onValue, update, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const firebaseConfig = {
+const db = getDatabase(initializeApp({
   apiKey: "AIzaSyAEsTu1P6SX07539nDDaO5fgI78N7QkHPM",
   authDomain: "finalpenclasicounivalle.firebaseapp.com",
   databaseURL: "https://finalpenclasicounivalle-default-rtdb.firebaseio.com",
@@ -27,51 +154,56 @@ const firebaseConfig = {
   storageBucket: "finalpenclasicounivalle.firebasestorage.app",
   messagingSenderId: "733792952009",
   appId: "1:733792952009:web:822db58cdebc63f8d8f718"
-};
+}));
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const TIMER_SECS = 45;
+const PUNTOS_POS = [100, 85, 70, 50]; // 1ro, 2do, 3ro, 4to+
+const COMBO_MULT = { 2: 1.25, 3: 1.5 };  // combo 2 → ×1.25, 3+ → ×1.5, 4+ → ×2.0
+const COMBO_MULT_MAX = 2.0;
+const NOTAS_POR_PUESTO = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5]; // índice 0=1er puesto, 5+=2.0
 
-// ── PREGUNTAS SESIONES 11-13 ──────────────────────────────────────────
-const PREGUNTAS = [
-  // SESIÓN 11 — DRUCKER / APO / OKR
-  { pregunta: "Para Peter Drucker, el propósito fundamental de una empresa es:", opciones: ["Maximizar las ganancias para los accionistas", "Crear un cliente", "Reducir costos de producción", "Cumplir con la normatividad legal"], correcta: 1, sesion: 11, tema: "Drucker", tipo: "mc" },
-  { pregunta: "La Administración por Objetivos (APO) fue presentada por Drucker en su libro The Practice of Management (1954).", opciones: ["Verdadero", "Falso"], correcta: 0, sesion: 11, tema: "APO", tipo: "vf" },
-  { pregunta: "Según la APO, los objetivos deben ser acordados mediante:", opciones: ["Imposición unilateral del superior", "Diálogo entre superior y subordinado", "Decisión exclusiva del área de RRHH", "Votación del equipo directivo"], correcta: 1, sesion: 11, tema: "APO", tipo: "mc" },
-  { pregunta: "Drucker distingue entre eficiencia y efectividad. La efectividad se define como:", opciones: ["Hacer las cosas correctamente", "Hacer las cosas correctas", "Minimizar el uso de recursos", "Cumplir con los plazos establecidos"], correcta: 1, sesion: 11, tema: "Drucker", tipo: "mc" },
-  { pregunta: "Los OKR (Objectives and Key Results) fueron formalizados por Andy Grove en Intel y popularizados en Google.", opciones: ["Verdadero", "Falso"], correcta: 0, sesion: 11, tema: "OKR", tipo: "vf" },
-  { pregunta: "Una diferencia clave entre OKR y APO clásica es que los OKR se desacoplan de la compensación salarial para evitar metas conservadoras.", opciones: ["Verdadero", "Falso"], correcta: 0, sesion: 11, tema: "OKR", tipo: "vf" },
-  { pregunta: "Drucker define la administración como un 'arte liberal' porque:", opciones: ["No requiere formación técnica especializada", "Integra psicología, sociología, economía, filosofía e historia aplicadas a la práctica", "Es accesible para cualquier persona sin educación formal", "Se basa en la intuición más que en la teoría"], correcta: 1, sesion: 11, tema: "Drucker", tipo: "mc" },
-  { pregunta: "El concepto de 'trabajador del conocimiento' fue acuñado por Drucker en la década de 1950, cuando más del 70% de la fuerza laboral era manual.", opciones: ["Verdadero", "Falso"], correcta: 0, sesion: 11, tema: "Drucker", tipo: "vf" },
-  { pregunta: "Según Drucker, tratar el salario de un ingeniero como 'costo laboral' es gerencialmente correcto.", opciones: ["Verdadero", "Falso"], correcta: 1, sesion: 11, tema: "Drucker", tipo: "vf" },
-  { pregunta: "Las cinco preguntas fundamentales de Drucker incluyen: ¿Cuál es nuestra misión?, ¿Quién es nuestro cliente?, ¿Qué valora nuestro cliente?, ¿Cuáles son nuestros resultados? y:", opciones: ["¿Cuánto ganamos?", "¿Cuál es nuestro plan?", "¿Quiénes son nuestros competidores?", "¿Qué recursos tenemos?"], correcta: 1, sesion: 11, tema: "Drucker", tipo: "mc" },
-  { pregunta: "En el proceso de APO, el autocontrol reemplaza al control externo una vez acordados los objetivos e indicadores.", opciones: ["Verdadero", "Falso"], correcta: 0, sesion: 11, tema: "APO", tipo: "vf" },
-  { pregunta: "Un error frecuente al implementar OKR en Colombia es tratar los resultados clave como una lista de tareas en lugar de resultados medibles.", opciones: ["Verdadero", "Falso"], correcta: 0, sesion: 11, tema: "OKR", tipo: "vf" },
-
-  // SESIÓN 12 — CHANDLER / ANSOFF / PORTER / ESTRATEGIA
-  { pregunta: "La proposición central de Alfred Chandler en 'Strategy and Structure' (1962) es:", opciones: ["La estrategia sigue a la estructura", "La estructura sigue a la estrategia", "La cultura determina la estrategia", "La tecnología determina la estructura"], correcta: 1, sesion: 12, tema: "Chandler", tipo: "mc" },
-  { pregunta: "Chandler analizó cuatro corporaciones para llegar a su proposición central: DuPont, General Motors, Standard Oil y Sears Roebuck.", opciones: ["Verdadero", "Falso"], correcta: 0, sesion: 12, tema: "Chandler", tipo: "vf" },
-  { pregunta: "La estructura funcional resulta disfuncional cuando la empresa necesita gestionar:", opciones: ["Un solo producto en un mercado estable", "Múltiples productos en múltiples mercados", "Operaciones en una sola ciudad", "Un equipo reducido de trabajadores"], correcta: 1, sesion: 12, tema: "Chandler", tipo: "mc" },
-  { pregunta: "Según la Matriz de Ansoff, la estrategia de mayor riesgo es:", opciones: ["Penetración de mercado", "Desarrollo de mercado", "Desarrollo de producto", "Diversificación"], correcta: 3, sesion: 12, tema: "Ansoff", tipo: "mc" },
-  { pregunta: "Ansoff fue el primero en formalizar la diferencia entre decisiones operativas, administrativas y estratégicas.", opciones: ["Verdadero", "Falso"], correcta: 0, sesion: 12, tema: "Ansoff", tipo: "vf" },
-  { pregunta: "Porter identifica tres estrategias genéricas competitivas. ¿Cuál de las siguientes NO es una de ellas?", opciones: ["Liderazgo en costos", "Diferenciación", "Diversificación conglomerada", "Enfoque o concentración"], correcta: 2, sesion: 12, tema: "Porter", tipo: "mc" },
-  { pregunta: "La empresa 'atrapada en el medio' según Porter es aquella que:", opciones: ["Compite en mercados internacionales", "No tiene claro si compite por costos o por diferenciación", "Tiene más de cinco líneas de producto", "Opera en más de tres países simultáneamente"], correcta: 1, sesion: 12, tema: "Porter", tipo: "mc" },
-  { pregunta: "La transformación digital genuina implica solamente adoptar nuevas tecnologías sin cambiar la estructura organizacional.", opciones: ["Verdadero", "Falso"], correcta: 1, sesion: 12, tema: "Estrategia", tipo: "vf" },
-  { pregunta: "El concepto de 'ambidextrismo organizacional' se refiere a la capacidad de explotar el negocio actual mientras se exploran oportunidades futuras simultáneamente.", opciones: ["Verdadero", "Falso"], correcta: 0, sesion: 12, tema: "Estrategia", tipo: "vf" },
-  { pregunta: "La cadena de valor de Porter incluye actividades primarias y de apoyo. ¿Cuál de las siguientes es una actividad primaria?", opciones: ["Gestión de recursos humanos", "Infraestructura de la empresa", "Logística de entrada y operaciones", "Adquisiciones (compras)"], correcta: 2, sesion: 12, tema: "Porter", tipo: "mc" },
-
-  // SESIÓN 13 — IA / COBOTIZACIÓN / FUTURO DEL TRABAJO
-  { pregunta: "La 'cobotización' se define como:", opciones: ["La sustitución total del trabajador por máquinas", "La colaboración entre humanos y máquinas donde cada uno aporta lo que hace mejor", "El uso exclusivo de robots en la producción industrial", "La regulación legal de la inteligencia artificial"], correcta: 1, sesion: 13, tema: "IA", tipo: "mc" },
-  { pregunta: "La tercera ola de automatización, a diferencia de las anteriores, afecta principalmente a los trabajadores del conocimiento mediante inteligencia artificial.", opciones: ["Verdadero", "Falso"], correcta: 0, sesion: 13, tema: "IA", tipo: "vf" },
-  { pregunta: "Según el texto, el taylorismo digital con IA amplifica la cosificación del trabajador al monitorear cada acción algorítmicamente.", opciones: ["Verdadero", "Falso"], correcta: 0, sesion: 13, tema: "IA", tipo: "vf" },
-  { pregunta: "Una IA usada para optimizar únicamente dentro del marco existente sin cuestionar si el proceso debe existir practica:", opciones: ["Aprendizaje de doble bucle", "Aprendizaje de bucle simple", "Pensamiento sistémico", "Gestión por objetivos"], correcta: 1, sesion: 13, tema: "IA", tipo: "mc" },
-  { pregunta: "La competencia que el texto señala como irreductiblemente humana frente a la IA es:", opciones: ["Velocidad de procesamiento de datos", "Consistencia en tareas repetitivas", "Juicio ético, empatía y pensamiento crítico contextual", "Capacidad de almacenamiento de información"], correcta: 2, sesion: 13, tema: "IA", tipo: "mc" },
-  { pregunta: "El AI Act de la Unión Europea clasifica los sistemas de IA con riesgo 'inaceptable' (prohibidos). ¿Cuál de los siguientes ejemplos corresponde a esa categoría?", opciones: ["Chatbots de atención al cliente", "Scoring social y manipulación subliminal", "Sistemas de recomendación de contenido", "Algoritmos de pricing dinámico"], correcta: 1, sesion: 13, tema: "IA", tipo: "mc" },
-  { pregunta: "Drucker anticipó que la IA haría obsoletas sus ideas sobre gestión por objetivos y trabajadores del conocimiento.", opciones: ["Verdadero", "Falso"], correcta: 1, sesion: 13, tema: "IA", tipo: "vf" },
-  { pregunta: "Según el texto, ¿cuál es el factor que determina si la IA sirve como instrumento de control o de liberación en una organización?", opciones: ["El nivel de inversión en tecnología", "La filosofía gerencial que guía su implementación", "La velocidad de adopción tecnológica", "El tamaño de la empresa"], correcta: 1, sesion: 13, tema: "IA", tipo: "mc" }
+// ── PREGUNTAS ─────────────────────────────────────────────────────────────
+const PREGUNTAS_RAW = [
+  {p:"Para Peter Drucker, el propósito fundamental de una empresa es:",o:["Maximizar ganancias para accionistas","Crear un cliente","Reducir costos de producción","Cumplir normatividad legal"],c:1,s:11,t:"Drucker"},
+  {p:"La Administración por Objetivos (APO) fue presentada por Drucker en The Practice of Management (1954).",o:["Verdadero","Falso"],c:0,s:11,t:"APO"},
+  {p:"Según la APO, los objetivos deben acordarse mediante:",o:["Imposición unilateral del superior","Diálogo entre superior y subordinado","Decisión exclusiva de RRHH","Votación del equipo directivo"],c:1,s:11,t:"APO"},
+  {p:"Drucker: la efectividad se define como:",o:["Hacer las cosas correctamente","Hacer las cosas correctas","Minimizar el uso de recursos","Cumplir los plazos establecidos"],c:1,s:11,t:"Drucker"},
+  {p:"Los OKR fueron formalizados por Andy Grove en Intel y popularizados en Google.",o:["Verdadero","Falso"],c:0,s:11,t:"OKR"},
+  {p:"Los OKR se desacoplan de la compensación salarial para evitar metas conservadoras.",o:["Verdadero","Falso"],c:0,s:11,t:"OKR"},
+  {p:"Drucker define la administración como 'arte liberal' porque:",o:["No requiere formación técnica","Integra psicología, sociología, economía, filosofía e historia aplicadas a la práctica","Es accesible sin educación formal","Se basa en la intuición más que en la teoría"],c:1,s:11,t:"Drucker"},
+  {p:"El concepto de 'trabajador del conocimiento' fue acuñado por Drucker en la década de 1950.",o:["Verdadero","Falso"],c:0,s:11,t:"Drucker"},
+  {p:"Según Drucker, tratar el salario de un ingeniero como 'costo laboral' es gerencialmente correcto.",o:["Verdadero","Falso"],c:1,s:11,t:"Drucker"},
+  {p:"Las 5 preguntas de Drucker incluyen misión, cliente, valor, resultados y:",o:["¿Cuánto ganamos?","¿Cuál es nuestro plan?","¿Quiénes son nuestros competidores?","¿Qué recursos tenemos?"],c:1,s:11,t:"Drucker"},
+  {p:"En la APO el autocontrol reemplaza al control externo una vez acordados objetivos e indicadores.",o:["Verdadero","Falso"],c:0,s:11,t:"APO"},
+  {p:"Error frecuente al implementar OKR: tratar resultados clave como lista de tareas.",o:["Verdadero","Falso"],c:0,s:11,t:"OKR"},
+  {p:"La proposición central de Chandler en Strategy and Structure (1962) es:",o:["La estrategia sigue a la estructura","La estructura sigue a la estrategia","La cultura determina la estrategia","La tecnología determina la estructura"],c:1,s:12,t:"Chandler"},
+  {p:"Chandler analizó DuPont, General Motors, Standard Oil y Sears Roebuck.",o:["Verdadero","Falso"],c:0,s:12,t:"Chandler"},
+  {p:"La estructura funcional es disfuncional cuando la empresa necesita gestionar:",o:["Un solo producto en mercado estable","Múltiples productos en múltiples mercados","Operaciones en una sola ciudad","Equipo reducido de trabajadores"],c:1,s:12,t:"Chandler"},
+  {p:"Según la Matriz de Ansoff, la estrategia de mayor riesgo es:",o:["Penetración de mercado","Desarrollo de mercado","Desarrollo de producto","Diversificación"],c:3,s:12,t:"Ansoff"},
+  {p:"Ansoff fue el primero en formalizar la diferencia entre decisiones operativas, administrativas y estratégicas.",o:["Verdadero","Falso"],c:0,s:12,t:"Ansoff"},
+  {p:"¿Cuál de las siguientes NO es una estrategia genérica de Porter?",o:["Liderazgo en costos","Diferenciación","Diversificación conglomerada","Enfoque o concentración"],c:2,s:12,t:"Porter"},
+  {p:"La empresa 'atrapada en el medio' según Porter es aquella que:",o:["Compite en mercados internacionales","No tiene claro si compite por costos o diferenciación","Tiene más de cinco líneas de producto","Opera en más de tres países"],c:1,s:12,t:"Porter"},
+  {p:"La transformación digital genuina implica solo adoptar tecnología sin cambiar la estructura organizacional.",o:["Verdadero","Falso"],c:1,s:12,t:"Estrategia"},
+  {p:"El ambidextrismo organizacional es la capacidad de explotar el negocio actual mientras se exploran oportunidades futuras.",o:["Verdadero","Falso"],c:0,s:12,t:"Estrategia"},
+  {p:"¿Cuál de las siguientes es una actividad PRIMARIA en la cadena de valor de Porter?",o:["Gestión de recursos humanos","Infraestructura de la empresa","Logística de entrada y operaciones","Adquisiciones (compras)"],c:2,s:12,t:"Porter"},
+  {p:"La cobotización se define como:",o:["Sustitución total del trabajador por máquinas","Colaboración entre humanos y máquinas donde cada uno aporta lo que hace mejor","Uso exclusivo de robots en producción","Regulación legal de la inteligencia artificial"],c:1,s:13,t:"IA"},
+  {p:"La tercera ola de automatización afecta principalmente a los trabajadores del conocimiento mediante IA.",o:["Verdadero","Falso"],c:0,s:13,t:"IA"},
+  {p:"El taylorismo digital con IA amplifica la cosificación del trabajador al monitorear cada acción algorítmicamente.",o:["Verdadero","Falso"],c:0,s:13,t:"IA"},
+  {p:"Una IA que optimiza dentro del marco existente sin cuestionar si el proceso debe existir practica:",o:["Aprendizaje de doble bucle","Aprendizaje de bucle simple","Pensamiento sistémico","Gestión por objetivos"],c:1,s:13,t:"IA"},
+  {p:"La competencia irreductiblemente humana frente a la IA según el texto es:",o:["Velocidad de procesamiento","Consistencia en tareas repetitivas","Juicio ético, empatía y pensamiento crítico contextual","Capacidad de almacenamiento"],c:2,s:13,t:"IA"},
+  {p:"El AI Act de la UE clasifica como riesgo inaceptable (prohibido):",o:["Chatbots de atención al cliente","Scoring social y manipulación subliminal","Sistemas de recomendación de contenido","Algoritmos de pricing dinámico"],c:1,s:13,t:"IA"},
+  {p:"Drucker anticipó que la IA haría obsoletas sus ideas sobre gestión por objetivos.",o:["Verdadero","Falso"],c:1,s:13,t:"IA"},
+  {p:"¿Qué factor determina si la IA sirve como instrumento de control o de liberación en una organización?",o:["El nivel de inversión en tecnología","La filosofía gerencial que guía su implementación","La velocidad de adopción tecnológica","El tamaño de la empresa"],c:1,s:13,t:"IA"}
 ];
 
-// ── ESTUDIANTES ───────────────────────────────────────────────────────
+function shuffleQuestion(q) {
+  const correct = q.o[q.c];
+  const shuffled = [...q.o].sort(() => Math.random() - 0.5);
+  return { ...q, o: shuffled, c: shuffled.indexOf(correct) };
+}
+const PREGUNTAS = PREGUNTAS_RAW.map(shuffleQuestion);
+
 const ESTUDIANTES = [
   "ALZATE RESTREPO VALENTINA","BOTERO MORALES NATALIA","CAICEDO ACEVEDO YULIANA",
   "CARDENAS RUIZ NAYDIOMI","CARDONA CARREÑO JAIME ANDRES","CARDONA MURILLO NICOLAS",
@@ -85,352 +217,591 @@ const ESTUDIANTES = [
   "VELEZ TANGARIFE YHAN CARLO","VIDAL DEYBER ANDRES"
 ];
 
-const COLORES_GRUPO = ["#8B3A2A","#2A5C42","#1D3557","#6B2D8B","#7B5C00","#0B5B6B","#4A1942","#1B5C32","#7A2020","#3A4A00"];
+const GRUP_COLORS = ["#00D4FF","#F5A623","#FF6B35","#00FF88","#A855F7","#FF1493","#FFD700","#00FA9A","#FF6B6B","#7DF9FF"];
 
-let estadoLocal = {};
-let gameRef;
+// ── REGLAS DEL JUEGO ────────────────────────────────────────────────────────
+const REGLAS = [
+  { icon:"⏱️", title:"TIEMPO POR PREGUNTA", text:"Cada pregunta tiene <strong>45 segundos</strong>. Al terminar el tiempo, la pregunta se cierra automáticamente." },
+  { icon:"📶", title:"PUNTOS POR VELOCIDAD", text:"<strong>1er grupo en responder: 100 pts · 2do: 85 pts · 3ro: 70 pts · 4to en adelante: 50 pts</strong>" },
+  { icon:"🔥", title:"MULTIPLICADOR DE COMBO", text:"Si tu grupo responde en el <strong>top 3 de forma consecutiva</strong>, ganas un multiplicador: 2 seguidas = ×1.25 · 3 seguidas = ×1.5 · 4+ seguidas = ×2.0. Si caes al 4to lugar o más, el combo se pierde." },
+  { icon:"🏆", title:"NOTAS FINALES POR PUESTO", text:"<strong>1° → 5.0 · 2° → 4.5 · 3° → 4.0 · 4° → 3.5 · 5° → 3.0 · 6° → 2.5 · Resto → 2.0</strong>" },
+  { icon:"📱", title:"UN SOLO DISPOSITIVO POR GRUPO", text:"Solo <strong>un celular por grupo</strong>. Decidan quién responde, pero discutan juntos." },
+  { icon:"🚦", title:"INICIO CONTROLADO", text:"El parcial <strong>no inicia hasta que el profesor lo autorice</strong>. Permanezcan atentos a la pantalla." }
+];
 
-// ── ROUTING ───────────────────────────────────────────────────────────
+let estado = {};
+const gameRef = ref(db, 'juego');
+onValue(gameRef, s => { estado = s.val() || {}; });
+
+// Stars
+(function() {
+  const sf = document.getElementById('starfield');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div'), sz = Math.random()*2.5+0.5;
+    s.className = 'star';
+    s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*4+2).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s`;
+    sf.appendChild(s);
+  }
+})();
+
 function getView() {
-  const p = new URLSearchParams(location.search);
-  if (p.get('v') === 'profesor') return 'profesor';
-  if (p.get('v') === 'jugador') return 'jugador';
-  return 'inicio';
+  const v = new URLSearchParams(location.search).get('v');
+  return v === 'profesor' ? 'profesor' : v === 'jugador' ? 'jugador' : 'inicio';
 }
 
-// ══════════════════════════════════════════════════════════════════════
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function getComboMult(streak) {
+  if (streak >= 4) return COMBO_MULT_MAX;
+  return COMBO_MULT[streak] || 1.0;
+}
+
+function calcPuntos(posicion, streak) {
+  const base = posicion <= 3 ? PUNTOS_POS[posicion - 1] : PUNTOS_POS[3];
+  const mult = posicion <= 3 ? getComboMult(streak) : 1.0;
+  return Math.round(base * mult);
+}
+
+function getNota(puesto) {
+  if (puesto <= NOTAS_POR_PUESTO.length) return NOTAS_POR_PUESTO[puesto - 1];
+  return 2.0;
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // VISTA INICIO
-// ══════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════════════
 function renderInicio() {
-  const base = location.href.split('?')[0];
-  const urlJugador = base + '?v=jugador';
+  const base = location.href.split('?')[0], urlJ = base + '?v=jugador';
   document.getElementById('app').innerHTML = `
-    <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;background:#0d0f1a;">
-      <div style="max-width:480px;width:100%;text-align:center;">
-        <div style="font-size:11px;letter-spacing:3px;color:#6b6050;text-transform:uppercase;margin-bottom:0.8rem;">Universidad del Valle · FCA · 2026-I</div>
-        <h1 style="font-size:2.6rem;font-weight:700;color:#f0ead8;line-height:1.1;margin-bottom:0.3rem;">Pensamiento<br>Clásico</h1>
-        <div style="font-size:0.95rem;color:#8a7a60;margin-bottom:0.4rem;">Parcial Interactivo · Sesiones 11–13</div>
-        <div style="font-size:0.8rem;color:#5a5040;margin-bottom:2.5rem;">Drucker · Chandler · Ansoff · Porter · IA</div>
-        <div style="display:grid;gap:0.8rem;margin-bottom:2.5rem;">
-          <a href="?v=profesor" style="display:block;padding:1rem 1.5rem;background:#1a1d2e;border:1px solid #3a3520;border-radius:10px;color:#f0ead8;text-decoration:none;font-size:1rem;">
-            🖥️ &nbsp; Panel Profesor / Proyector
-          </a>
-          <a href="?v=jugador" style="display:block;padding:1rem 1.5rem;background:#1a1d2e;border:1px solid #3a3520;border-radius:10px;color:#f0ead8;text-decoration:none;font-size:1rem;">
-            📱 &nbsp; Vista Estudiantes (celular)
-          </a>
+    <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;">
+      <div style="margin-bottom:1.5rem;">
+        <div class="label" style="margin-bottom:0.5rem;">Universidad del Valle · FCA · Sede Cartago · 2026-I</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(0,48,135,0.3);border:1px solid rgba(0,212,255,0.2);border-radius:20px;">
+          <span class="pulse-dot"></span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--uv-cyan);">SISTEMA DE EVALUACIÓN INTERACTIVO</span>
         </div>
-        <div style="font-size:11px;color:#4a4030;margin-bottom:0.6rem;letter-spacing:1px;">QR PARA ESTUDIANTES</div>
-        <div id="qr-home" style="display:inline-block;background:#fff;padding:10px;border-radius:8px;"></div>
-        <div style="font-size:10px;color:#4a4030;margin-top:0.5rem;word-break:break-all;">${urlJugador}</div>
       </div>
+      <h1 class="display-title glow-text" style="font-size:clamp(2.5rem,7vw,5rem);line-height:1;margin-bottom:0.5rem;">Pensamiento<br>Clásico</h1>
+      <div style="color:rgba(200,220,255,0.6);margin-bottom:0.3rem;font-size:0.95rem;">Parcial Interactivo · Sesiones 11–13</div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:rgba(0,212,255,0.5);margin-bottom:3rem;letter-spacing:2px;">DRUCKER · CHANDLER · ANSOFF · PORTER · IA</div>
+      <div style="display:grid;gap:1rem;width:100%;max-width:420px;margin-bottom:3rem;">
+        <a href="?v=profesor" style="text-decoration:none;">
+          <div class="panel corner-deco" style="padding:1.2rem 1.5rem;display:flex;align-items:center;gap:14px;">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,var(--uv-blue),var(--uv-cyan));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🖥️</div>
+            <div style="text-align:left;">
+              <div style="font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:1px;color:#fff;">PANEL PROFESOR</div>
+              <div style="font-family:var(--font-mono);font-size:10px;color:var(--uv-cyan);opacity:0.7;">Control + Proyector</div>
+            </div>
+          </div>
+        </a>
+        <a href="?v=jugador" style="text-decoration:none;">
+          <div class="panel corner-deco" style="padding:1.2rem 1.5rem;display:flex;align-items:center;gap:14px;">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,var(--uv-red),#ff6b6b);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">📱</div>
+            <div style="text-align:left;">
+              <div style="font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:1px;color:#fff;">VISTA ESTUDIANTE</div>
+              <div style="font-family:var(--font-mono);font-size:10px;color:var(--uv-cyan);opacity:0.7;">Desde el celular</div>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="label" style="margin-bottom:0.8rem;">▼ QR PARA ESTUDIANTES</div>
+      <div style="background:#fff;padding:12px;border-radius:12px;display:inline-block;box-shadow:0 0 30px rgba(0,212,255,0.3);">
+        <div id="qr-home"></div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.4);margin-top:0.8rem;">${urlJ}</div>
     </div>`;
-  new QRCode(document.getElementById('qr-home'), { text: urlJugador, width:140, height:140, colorDark:'#1a1208', colorLight:'#ffffff' });
+  new QRCode(document.getElementById('qr-home'), { text: urlJ, width: 150, height: 150, colorDark: '#003087', colorLight: '#ffffff' });
 }
 
-// ══════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════════════
 // VISTA PROFESOR
-// ══════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════════════
+let timerInterval = null;
+
 function renderProfesor() {
-  gameRef = ref(db, 'juego');
   document.getElementById('app').innerHTML = `
-    <div style="min-height:100vh;background:#0d0f1a;color:#f0ead8;font-family:Georgia,serif;padding:1rem;">
-      <!-- Header -->
-      <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2618;padding-bottom:0.8rem;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
-        <div>
-          <div style="font-size:10px;letter-spacing:2px;color:#6b6050;text-transform:uppercase;">Panel Profesor · Pensamiento Clásico S11-13</div>
-          <div id="p-estado" style="font-size:0.85rem;color:#c9a84c;margin-top:2px;">Cargando...</div>
+    <div style="min-height:100vh;padding:1.2rem;display:grid;grid-template-rows:auto 1fr;gap:1rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem;padding-bottom:0.8rem;border-bottom:1px solid var(--uv-border);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="pulse-dot"></span>
+          <div>
+            <div class="label">Pensamiento Clásico · S11–13 · 801082C</div>
+            <div id="pe-status" style="font-family:var(--font-display);font-size:13px;color:var(--uv-gold);margin-top:2px;">STANDBY</div>
+          </div>
         </div>
         <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
-          <button onclick="window.profe_iniciar()" style="padding:0.45rem 0.9rem;background:#c9a84c;color:#1a1208;border:none;border-radius:6px;font-size:0.8rem;font-weight:700;">▶ Iniciar</button>
-          <button onclick="window.profe_siguiente()" style="padding:0.45rem 0.9rem;background:#2a2e42;color:#f0ead8;border:1px solid #4a4530;border-radius:6px;font-size:0.8rem;">→ Siguiente</button>
-          <button onclick="window.profe_ranking()" style="padding:0.45rem 0.9rem;background:#2a2e42;color:#f0ead8;border:1px solid #4a4530;border-radius:6px;font-size:0.8rem;">🏆 Ranking</button>
-          <button onclick="window.profe_notas()" style="padding:0.45rem 0.9rem;background:#1e3a1e;color:#90d890;border:1px solid #2a5a2a;border-radius:6px;font-size:0.8rem;">📋 Notas</button>
-          <button onclick="window.profe_reiniciar()" style="padding:0.45rem 0.9rem;background:#3a1a1a;color:#f09090;border:1px solid #5a2a2a;border-radius:6px;font-size:0.8rem;">↺ Reiniciar</button>
+          <button onclick="window.pI()" class="btn-primary">▶ INICIAR</button>
+          <button onclick="window.pS()" class="btn-secondary">→ SIGUIENTE</button>
+          <button onclick="window.pR()" class="btn-secondary">🏆 RANKING</button>
+          <button onclick="window.pN()" class="btn-notes">📋 NOTAS</button>
+          <button onclick="window.pRe()" class="btn-danger">↺ REINICIAR</button>
         </div>
       </div>
-      <!-- Main grid -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-        <!-- Columna izq -->
-        <div>
-          <div style="background:#141728;border:1px solid #2a2e42;border-radius:10px;padding:1rem;margin-bottom:1rem;">
-            <div style="font-size:10px;color:#6b6050;letter-spacing:1px;margin-bottom:0.5rem;">PREGUNTA ACTUAL</div>
-            <div id="p-num" style="font-size:10px;color:#8a7a60;margin-bottom:0.4rem;">—</div>
-            <div id="p-q-texto" style="font-size:0.9rem;color:#f0ead8;line-height:1.5;">—</div>
-            <div id="p-q-opciones" style="margin-top:0.6rem;font-size:0.8rem;color:#8a7a60;"></div>
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:1.2rem;align-items:start;">
+        <div class="panel corner-deco" style="padding:2rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+            <div id="pe-meta" class="label">ESPERANDO INICIO</div>
+            <div id="pe-timer-proj" style="display:none;align-items:center;gap:8px;">
+              <svg width="48" height="48" class="timer-ring"><circle class="timer-circle-bg" cx="24" cy="24" r="20"/><circle id="pe-timer-circle" class="timer-circle" cx="24" cy="24" r="20" stroke="var(--uv-cyan)" stroke-dasharray="125.66" stroke-dashoffset="0"/></svg>
+              <span id="pe-timer-num" style="font-family:var(--font-display);font-size:1.8rem;font-weight:900;color:var(--uv-cyan);min-width:40px;">${TIMER_SECS}</span>
+            </div>
           </div>
-          <div style="background:#141728;border:1px solid #2a2e42;border-radius:10px;padding:1rem;">
-            <div style="font-size:10px;color:#6b6050;letter-spacing:1px;margin-bottom:0.6rem;">RESPUESTAS EN TIEMPO REAL</div>
-            <div id="p-respuestas" style="font-size:0.85rem;color:#6b6050;">Esperando...</div>
-          </div>
+          <div class="progress-bar" style="margin-bottom:1.5rem;"><div id="pe-progress" class="progress-fill" style="width:0%"></div></div>
+          <div id="pe-q-text" class="projector-question" style="margin-bottom:2rem;">—</div>
+          <div id="pe-options" style="display:grid;gap:0.6rem;"></div>
         </div>
-        <!-- Columna der -->
-        <div>
-          <div style="background:#141728;border:1px solid #2a2e42;border-radius:10px;padding:1rem;margin-bottom:1rem;">
-            <div style="font-size:10px;color:#6b6050;letter-spacing:1px;margin-bottom:0.6rem;">RANKING DE GRUPOS</div>
-            <div id="p-ranking" style="font-size:0.85rem;">—</div>
+        <div style="display:grid;gap:1rem;">
+          <div class="panel" style="padding:1.5rem;text-align:center;">
+            <div class="label" style="margin-bottom:0.5rem;">RESPUESTAS RECIBIDAS</div>
+            <div id="pe-count" style="font-family:var(--font-display);font-size:4rem;font-weight:900;color:var(--uv-cyan);text-shadow:0 0 30px rgba(0,212,255,0.5);line-height:1;">0</div>
+            <div id="pe-count-total" style="font-family:var(--font-mono);font-size:11px;color:rgba(0,212,255,0.4);margin-top:4px;">de 0 grupos</div>
           </div>
-          <div style="background:#141728;border:1px solid #2a2e42;border-radius:10px;padding:1rem;">
-            <div style="font-size:10px;color:#6b6050;letter-spacing:1px;margin-bottom:0.6rem;">GRUPOS REGISTRADOS</div>
-            <div id="p-grupos" style="font-size:0.8rem;color:#6b6050;">—</div>
+          <div class="panel" style="padding:1rem;">
+            <div class="label" style="margin-bottom:0.6rem;">RANKING</div>
+            <div id="pe-ranking" style="font-size:0.8rem;color:rgba(200,220,255,0.6);">—</div>
+          </div>
+          <div class="panel" style="padding:1rem;">
+            <div class="label" style="margin-bottom:0.6rem;">GRUPOS REGISTRADOS</div>
+            <div id="pe-grupos" style="font-size:0.75rem;color:rgba(0,212,255,0.6);">—</div>
           </div>
         </div>
       </div>
-      <!-- Modal notas -->
-      <div id="modal-notas" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;overflow-y:auto;padding:2rem;">
-        <div style="max-width:700px;margin:0 auto;background:#141728;border:1px solid #3a3520;border-radius:12px;padding:1.5rem;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-            <h2 style="font-size:1.1rem;color:#f0ead8;">📋 Planilla de Notas — Parcial Pensamiento Clásico</h2>
-            <button onclick="document.getElementById('modal-notas').style.display='none'" style="background:none;border:none;color:#f09090;font-size:1.2rem;">✕</button>
-          </div>
-          <div style="margin-bottom:1rem;font-size:0.8rem;color:#8a7a60;">Curso: 801082C · Semestre 2026-I · Docente: Alonso Restrepo Álvarez</div>
-          <div id="tabla-notas"></div>
-          <div style="margin-top:1rem;text-align:right;">
-            <button onclick="window.profe_exportarCSV()" style="padding:0.5rem 1.2rem;background:#c9a84c;color:#1a1208;border:none;border-radius:6px;font-size:0.85rem;font-weight:700;">⬇ Descargar CSV</button>
-          </div>
+    </div>
+
+    <!-- MODAL NOTAS -->
+    <div id="modal-notas" style="display:none;" class="modal-overlay">
+      <div class="modal-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <div><div class="label">Planilla de Notas</div><h2 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin-top:4px;">PARCIAL PENSAMIENTO CLÁSICO</h2></div>
+          <button onclick="document.getElementById('modal-notas').style.display='none'" style="background:none;border:none;color:#ff6b6b;font-size:1.3rem;cursor:pointer;">✕</button>
         </div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:rgba(0,212,255,0.5);margin-bottom:1rem;">801082C · 2026-I · Alonso Restrepo Álvarez</div>
+        <div id="tabla-notas"></div>
+        <div style="margin-top:1rem;text-align:right;"><button onclick="window.pCSV()" class="btn-primary">⬇ DESCARGAR CSV</button></div>
       </div>
     </div>`;
 
-  onValue(gameRef, snap => {
-    estadoLocal = snap.val() || {};
-    actualizarVistaProfesor(estadoLocal);
-  });
+  onValue(gameRef, s => { estado = s.val() || {}; updProf(estado); });
 }
 
-function actualizarVistaProfesor(d) {
-  const qi = d.preguntaActual ?? -1;
-  const total = PREGUNTAS.length;
-  const estados = { esperando:'⏳ Esperando inicio', jugando:`▶ Pregunta ${qi+1} de ${total}`, ranking:'🏆 Ranking final', terminado:'✔ Parcial terminado' };
-  document.getElementById('p-estado').textContent = estados[d.estado] || 'Listo';
+function updProf(d) {
+  const qi = d.preguntaActual ?? -1, tot = PREGUNTAS.length;
+  const st = { esperando:'STANDBY — GRUPOS REGISTRÁNDOSE', jugando:`PREGUNTA ${qi+1} / ${tot}`, ranking:'RESULTADO FINAL', reglas:'MOSTRANDO REGLAS' };
+  const statusEl = document.getElementById('pe-status');
+  if (statusEl) statusEl.textContent = st[d.estado] || 'STANDBY';
 
-  if (qi >= 0 && qi < total) {
+  const prog = document.getElementById('pe-progress');
+  if (prog) prog.style.width = qi >= 0 ? `${((qi+1)/tot)*100}%` : '0%';
+
+  // Timer visual
+  const timerProj = document.getElementById('pe-timer-proj');
+  if (d.estado === 'jugando' && d.timerStart) {
+    if (timerProj) timerProj.style.display = 'flex';
+    startProjTimer(d.timerStart);
+  } else {
+    if (timerProj) timerProj.style.display = 'none';
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  if (qi >= 0 && qi < tot && d.estado === 'jugando') {
     const q = PREGUNTAS[qi];
-    document.getElementById('p-num').textContent = `Sesión ${q.sesion} · ${q.tema} · ${q.tipo === 'vf' ? 'V/F' : 'Selección múltiple'}`;
-    document.getElementById('p-q-texto').textContent = q.pregunta;
-    document.getElementById('p-q-opciones').innerHTML = q.opciones.map((op,i) =>
-      `<div style="padding:2px 0;color:${i===q.correcta?'#7dcf90':'#6b6050'}">${String.fromCharCode(65+i)}) ${op}${i===q.correcta?' ✓':''}</div>`
-    ).join('');
+    const meta = document.getElementById('pe-meta');
+    const qt = document.getElementById('pe-q-text');
+    const qo = document.getElementById('pe-options');
+    if (meta) meta.textContent = `SESIÓN ${q.s} · ${q.t} · PREGUNTA ${qi+1} DE ${tot}`;
+    if (qt) qt.textContent = q.p;
+    // SIN marcar la correcta
+    if (qo) qo.innerHTML = q.o.map((op,i) => `
+      <div class="projector-option">
+        <span class="opt-letter">${String.fromCharCode(65+i)})</span><span>${op}</span>
+      </div>`).join('');
+  } else if (d.estado === 'ranking') {
+    const qt = document.getElementById('pe-q-text');
+    const qo = document.getElementById('pe-options');
+    const meta = document.getElementById('pe-meta');
+    if (meta) meta.textContent = 'RESULTADO FINAL DEL PARCIAL';
+    if (qt) qt.textContent = '🏆 Clasificación Final';
+    if (qo) {
+      const pts = d.puntajes||{}, ord = Object.entries(pts).sort((a,b)=>b[1]-a[1]);
+      qo.innerHTML = ord.map(([g,p],i) => {
+        const nt = getNota(i+1);
+        return `<div class="rank-item rank-${i+1}" style="font-family:var(--font-body);">
+          <span style="font-family:var(--font-display);font-size:13px;color:var(--uv-gold);min-width:24px;">${i+1}°</span>
+          <span style="flex:1;margin-left:8px;">${g}</span>
+          <span style="font-family:var(--font-mono);color:var(--uv-cyan);margin-right:12px;">${p} pts</span>
+          <span style="font-family:var(--font-display);font-weight:700;color:${nt>=3?'#00ff88':'#ff6b6b'};font-size:1rem;">${nt.toFixed(1)}</span>
+        </div>`;
+      }).join('');
+    }
+  } else if (d.estado === 'reglas') {
+    const qt = document.getElementById('pe-q-text');
+    const qo = document.getElementById('pe-options');
+    const meta = document.getElementById('pe-meta');
+    if (meta) meta.textContent = 'REGLAS DEL PARCIAL — LEAN ATENTAMENTE';
+    if (qt) qt.textContent = '📋 Reglas del Parcial Interactivo';
+    if (qo) qo.innerHTML = REGLAS.map(r=>`
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(0,212,255,0.1);">
+        <span style="font-size:1.2rem;min-width:28px;">${r.icon}</span>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--uv-cyan);letter-spacing:1px;margin-bottom:2px;">${r.title}</div>
+          <div style="font-size:0.82rem;color:rgba(200,220,255,0.8);">${r.text.replace(/<strong>/g,'').replace(/<\/strong>/g,'')}</div>
+        </div>
+      </div>`).join('');
+  } else {
+    const qt = document.getElementById('pe-q-text');
+    const qo = document.getElementById('pe-options');
+    const meta = document.getElementById('pe-meta');
+    if (meta) meta.textContent = 'ESPERANDO GRUPOS';
+    if (qt) qt.textContent = 'Los grupos se están registrando...';
+    if (qo) qo.innerHTML = '';
   }
 
   const respuestas = d.respuestas?.[qi] || {};
-  const grupos = Object.keys(respuestas);
-  document.getElementById('p-respuestas').innerHTML = grupos.length === 0
-    ? '<span style="color:#3a3428">Sin respuestas aún</span>'
-    : grupos.map(g => {
-        const r = respuestas[g];
-        const ok = PREGUNTAS[qi] && r.opcion === PREGUNTAS[qi].correcta;
-        return `<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #1e1c14;font-size:0.8rem;">
-          <span style="color:#a09070">${g}</span>
-          <span style="color:${ok?'#7dcf90':'#e07070'}">${ok?'✓ Correcta':'✗ Incorrecta'}</span>
-        </div>`;
-      }).join('');
+  const numResp = Object.keys(respuestas).length;
+  const numGrupos = Object.keys(d.grupos||{}).length;
+  const countEl = document.getElementById('pe-count');
+  const countTotal = document.getElementById('pe-count-total');
+  if (countEl) countEl.textContent = numResp;
+  if (countTotal) countTotal.textContent = `de ${numGrupos} grupos`;
 
-  const puntajes = d.puntajes || {};
-  const ordenados = Object.entries(puntajes).sort((a,b)=>b[1]-a[1]);
-  document.getElementById('p-ranking').innerHTML = ordenados.length === 0
-    ? '<span style="color:#3a3428">Sin puntajes aún</span>'
-    : ordenados.map(([g,p],i) =>
-        `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1e1c14;">
-          <span style="color:#c9a84c">${i+1}. ${g}</span>
-          <span style="font-weight:700">${p} pts</span>
-        </div>`
-      ).join('');
+  const pts = d.puntajes||{}, ord = Object.entries(pts).sort((a,b)=>b[1]-a[1]);
+  const rankEl = document.getElementById('pe-ranking');
+  if (rankEl) rankEl.innerHTML = ord.length === 0
+    ? '<span style="opacity:0.4">Sin puntajes aún</span>'
+    : ord.slice(0,5).map(([g,p],i)=>`
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(0,212,255,0.1);">
+        <span style="color:${i===0?'var(--uv-gold)':'rgba(200,220,255,0.7)'}">${i+1}. ${g}</span>
+        <span style="font-family:var(--font-mono);color:var(--uv-cyan)">${p}</span>
+      </div>`).join('');
 
-  const registrados = d.grupos || {};
-  document.getElementById('p-grupos').innerHTML = Object.keys(registrados).length === 0
-    ? '<span style="color:#3a3428">Ningún grupo registrado</span>'
-    : Object.entries(registrados).map(([nombre, info]) =>
-        `<div style="padding:3px 0;border-bottom:1px solid #1e1c14;font-size:0.78rem;">
-          <span style="color:#c9a84c">${nombre}</span>
-          <span style="color:#6b6050;margin-left:6px;">${(info.miembros||[]).join(', ')}</span>
-        </div>`
-      ).join('');
+  const reg = d.grupos||{};
+  const gruposEl = document.getElementById('pe-grupos');
+  if (gruposEl) gruposEl.innerHTML = Object.keys(reg).length === 0
+    ? '<span style="opacity:0.4">Ninguno aún</span>'
+    : Object.entries(reg).map(([n,info])=>`
+      <div style="padding:3px 0;border-bottom:1px solid rgba(0,212,255,0.1);font-size:0.72rem;">
+        <span style="color:var(--uv-cyan)">${n}</span>
+        <span style="opacity:0.5;margin-left:4px;">(${(info.miembros||[]).length})</span>
+        ${info.reglasAceptadas?'<span style="color:#00ff88;margin-left:4px;">✓</span>':'<span style="color:rgba(200,220,255,0.3);margin-left:4px;">⏳</span>'}
+      </div>`).join('');
 }
 
-window.profe_iniciar = async () => {
-  await set(ref(db,'juego'), {
-    estado:'jugando', preguntaActual:0,
-    puntajes:{}, respuestas:{},
-    grupos: estadoLocal.grupos || {}
-  });
+let lastTimerQi = -1;
+function startProjTimer(timerStart) {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  const circle = document.getElementById('pe-timer-circle');
+  const num = document.getElementById('pe-timer-num');
+  const circumference = 125.66;
+  timerInterval = setInterval(() => {
+    const elapsed = (Date.now() - timerStart) / 1000;
+    const remaining = Math.max(0, TIMER_SECS - elapsed);
+    if (num) num.textContent = Math.ceil(remaining);
+    if (circle) {
+      const offset = circumference * (1 - remaining / TIMER_SECS);
+      circle.style.strokeDashoffset = offset;
+      circle.style.stroke = remaining <= 10 ? (remaining <= 5 ? 'var(--uv-red)' : 'var(--uv-gold)') : 'var(--uv-cyan)';
+    }
+    if (remaining <= 0) { clearInterval(timerInterval); timerInterval = null; }
+  }, 250);
+}
+
+window.pI = async () => {
+  await set(gameRef, { estado:'reglas', preguntaActual:-1, puntajes:{}, respuestas:{}, grupos: estado.grupos||{}, combos:{} });
 };
-window.profe_siguiente = async () => {
-  const qi = estadoLocal.preguntaActual ?? 0;
-  if (qi + 1 >= PREGUNTAS.length) {
-    await update(ref(db,'juego'), {estado:'ranking'});
+window.pS = async () => {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  const qi = estado.preguntaActual ?? -1;
+  if (estado.estado === 'reglas') {
+    await update(gameRef, { estado:'jugando', preguntaActual:0, timerStart: Date.now() });
+    scheduleAutoAdvance(0);
+  } else if (qi + 1 >= PREGUNTAS.length) {
+    await update(gameRef, { estado:'ranking', timerStart: null });
   } else {
-    await update(ref(db,'juego'), {preguntaActual: qi+1, estado:'jugando'});
+    const next = qi + 1;
+    await update(gameRef, { preguntaActual: next, estado:'jugando', timerStart: Date.now() });
+    scheduleAutoAdvance(next);
   }
 };
-window.profe_ranking = async () => {
-  await update(ref(db,'juego'), {estado:'ranking'});
-};
-window.profe_reiniciar = async () => {
-  if (confirm('¿Reiniciar todo el juego? Se perderán puntajes y grupos registrados.')) {
-    await set(ref(db,'juego'), {estado:'esperando', preguntaActual:-1, puntajes:{}, respuestas:{}, grupos:{}});
+window.pR = async () => { await update(gameRef, { estado:'ranking', timerStart: null }); };
+window.pRe = async () => {
+  if (confirm('¿Reiniciar todo el juego?')) {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    await set(gameRef, { estado:'esperando', preguntaActual:-1, puntajes:{}, respuestas:{}, grupos:{}, combos:{} });
   }
 };
-window.profe_notas = () => {
-  generarTablaNotas();
-  document.getElementById('modal-notas').style.display = 'block';
-};
+window.pN = () => { genNotas(); document.getElementById('modal-notas').style.display = 'flex'; };
 
-function generarTablaNotas() {
-  const puntajes = estadoLocal.puntajes || {};
-  const grupos = estadoLocal.grupos || {};
-  const maxPts = PREGUNTAS.length * 100;
-  let filas = '';
-  let csvData = [['Grupo','Integrantes','Puntos','Nota (sobre 5.0)']];
-
-  Object.entries(grupos).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([nombre, info]) => {
-    const pts = puntajes[nombre] || 0;
-    const nota = Math.round((pts / maxPts) * 5 * 10) / 10;
-    const miembros = (info.miembros || []).join(' / ');
-    filas += `<tr>
-      <td style="padding:6px 10px;color:#c9a84c;font-size:0.82rem;">${nombre}</td>
-      <td style="padding:6px 10px;color:#a09070;font-size:0.78rem;">${miembros}</td>
-      <td style="padding:6px 10px;text-align:center;color:#f0ead8;">${pts}</td>
-      <td style="padding:6px 10px;text-align:center;color:${nota>=3?'#7dcf90':'#e07070'};font-weight:700;">${nota.toFixed(1)}</td>
-    </tr>`;
-    csvData.push([nombre, miembros, pts, nota.toFixed(1)]);
-  });
-
-  document.getElementById('tabla-notas').innerHTML = `
-    <table style="width:100%;border-collapse:collapse;font-family:Georgia,serif;">
-      <thead>
-        <tr style="border-bottom:2px solid #3a3520;">
-          <th style="padding:8px 10px;text-align:left;font-size:0.8rem;color:#6b6050;font-weight:500;">Grupo</th>
-          <th style="padding:8px 10px;text-align:left;font-size:0.8rem;color:#6b6050;font-weight:500;">Integrantes</th>
-          <th style="padding:8px 10px;text-align:center;font-size:0.8rem;color:#6b6050;font-weight:500;">Pts (/${maxPts})</th>
-          <th style="padding:8px 10px;text-align:center;font-size:0.8rem;color:#6b6050;font-weight:500;">Nota /5.0</th>
-        </tr>
-      </thead>
-      <tbody>${filas || '<tr><td colspan="4" style="padding:1rem;text-align:center;color:#3a3428">Sin grupos registrados aún</td></tr>'}</tbody>
-    </table>`;
-
-  window._csvData = csvData;
+// Auto-advance timer (profesor controla desde su lado)
+let autoAdvTimeout = null;
+function scheduleAutoAdvance(qi) {
+  if (autoAdvTimeout) clearTimeout(autoAdvTimeout);
+  autoAdvTimeout = setTimeout(async () => {
+    const d = estado;
+    if (d.estado === 'jugando' && d.preguntaActual === qi) {
+      if (qi + 1 >= PREGUNTAS.length) {
+        await update(gameRef, { estado:'ranking', timerStart: null });
+      } else {
+        const next = qi + 1;
+        await update(gameRef, { preguntaActual: next, timerStart: Date.now() });
+        scheduleAutoAdvance(next);
+      }
+    }
+  }, (TIMER_SECS + 1) * 1000);
 }
 
-window.profe_exportarCSV = () => {
-  const rows = window._csvData || [];
-  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'notas_pensamiento_clasico_2026.csv';
+function genNotas() {
+  const pts = estado.puntajes||{}, grps = estado.grupos||{};
+  const ord = Object.entries(pts).sort((a,b)=>b[1]-a[1]);
+  let rows = '', csv = [['Puesto','Grupo','Integrantes','Puntos','Nota /5.0']];
+  ord.forEach(([n,p], i) => {
+    const nt = getNota(i+1), info = grps[n]||{}, mb = (info.miembros||[]).join(' / ');
+    rows += `<tr>
+      <td style="padding:6px 8px;font-family:var(--font-display);font-size:12px;color:var(--uv-gold);text-align:center;">${i+1}°</td>
+      <td style="padding:6px 8px;font-family:var(--font-mono);font-size:11px;color:var(--uv-cyan);">${n}</td>
+      <td style="padding:6px 8px;font-size:11px;color:rgba(200,220,255,0.7);">${mb}</td>
+      <td style="padding:6px 8px;text-align:center;font-family:var(--font-mono);">${p}</td>
+      <td style="padding:6px 8px;text-align:center;font-family:var(--font-display);font-weight:700;color:${nt>=3?'#00ff88':'#ff6b6b'}">${nt.toFixed(1)}</td>
+    </tr>`;
+    csv.push([i+1, n, mb, p, nt.toFixed(1)]);
+  });
+  // Grupos sin puntos
+  Object.entries(grps).forEach(([n,info]) => {
+    if (!pts[n]) {
+      const idx = ord.length + 1, nt = getNota(idx), mb = (info.miembros||[]).join(' / ');
+      rows += `<tr>
+        <td style="padding:6px 8px;font-family:var(--font-display);font-size:12px;color:rgba(200,220,255,0.4);text-align:center;">—</td>
+        <td style="padding:6px 8px;font-family:var(--font-mono);font-size:11px;color:rgba(0,212,255,0.4);">${n}</td>
+        <td style="padding:6px 8px;font-size:11px;color:rgba(200,220,255,0.4);">${mb}</td>
+        <td style="padding:6px 8px;text-align:center;font-family:var(--font-mono);color:rgba(200,220,255,0.4);">0</td>
+        <td style="padding:6px 8px;text-align:center;font-family:var(--font-display);font-weight:700;color:#ff6b6b">2.0</td>
+      </tr>`;
+      csv.push(['-', n, mb, 0, '2.0']);
+    }
+  });
+  document.getElementById('tabla-notas').innerHTML = `
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr style="border-bottom:2px solid rgba(0,212,255,0.2);">
+        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.5);font-weight:400;text-align:center;">#</th>
+        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.5);font-weight:400;">GRUPO</th>
+        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.5);font-weight:400;">INTEGRANTES</th>
+        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.5);font-weight:400;text-align:center;">PTS</th>
+        <th style="padding:7px 8px;font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.5);font-weight:400;text-align:center;">NOTA</th>
+      </tr></thead>
+      <tbody>${rows||'<tr><td colspan="5" style="padding:1rem;text-align:center;opacity:0.4;">Sin datos</td></tr>'}</tbody>
+    </table>`;
+  window._csv = csv;
+}
+window.pCSV = () => {
+  const c = (window._csv||[]).map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([c],{type:'text/csv'})), download:'notas_pensamiento_clasico_2026.csv' });
   a.click();
 };
 
-// ══════════════════════════════════════════════════════════════════════
-// VISTA JUGADOR (CELULAR)
-// ══════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════════════
+// VISTA JUGADOR
+// ════════════════════════════════════════════════════════════════════════════
 function renderJugador() {
-  gameRef = ref(db,'juego');
   document.getElementById('app').innerHTML = `
-    <div style="min-height:100vh;background:#0d0f1a;color:#f0ead8;font-family:Georgia,serif;padding:1.2rem;max-width:440px;margin:0 auto;">
-      <div style="text-align:center;margin-bottom:1.5rem;">
-        <div style="font-size:10px;letter-spacing:2px;color:#6b6050;text-transform:uppercase;">Pensamiento Clásico · Parcial</div>
-        <div style="font-size:10px;color:#4a4030;margin-top:2px;">Sesiones 11–13 · 2026-I</div>
+    <div style="min-height:100vh;max-width:440px;margin:0 auto;padding:1.2rem;">
+      <div style="text-align:center;margin-bottom:1.5rem;padding-top:0.5rem;">
+        <div class="label" style="margin-bottom:4px;">PENSAMIENTO CLÁSICO · PARCIAL S11–13</div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.3);">2026-I · UNIVALLE FCA</div>
       </div>
-      <div id="j-contenido"></div>
+      <div id="jc"></div>
     </div>`;
-
-  mostrarFormularioGrupo();
-
-  onValue(ref(db,'juego'), snap => {
-    estadoLocal = snap.val() || {};
-  });
+  mostrarForm();
+  onValue(gameRef, s => { estado = s.val() || {}; });
 }
 
-function mostrarFormularioGrupo() {
-  const cont = document.getElementById('j-contenido');
-  cont.innerHTML = `
-    <div style="margin-bottom:1.2rem;">
-      <label style="font-size:0.85rem;color:#8a7a60;display:block;margin-bottom:0.5rem;">Nombre del grupo</label>
-      <input id="j-nombre-grupo" type="text" placeholder="Ej: Grupo Alpha" maxlength="30"
-        style="width:100%;padding:0.7rem;background:#1a1d2e;border:1px solid #3a3520;border-radius:8px;color:#f0ead8;font-size:0.95rem;font-family:Georgia,serif;">
-    </div>
-    <div style="margin-bottom:1.2rem;">
-      <div style="font-size:0.85rem;color:#8a7a60;margin-bottom:0.5rem;">Integrantes del grupo <span style="color:#4a4030;">(selecciona los miembros)</span></div>
-      <div id="lista-estudiantes" style="max-height:280px;overflow-y:auto;background:#141728;border:1px solid #2a2e42;border-radius:8px;padding:0.5rem;">
-        ${ESTUDIANTES.map(e => `
-          <label style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:5px;cursor:pointer;font-size:0.82rem;color:#c0b090;">
-            <input type="checkbox" value="${e}" style="accent-color:#c9a84c;width:15px;height:15px;">
-            ${e}
-          </label>`).join('')}
+function mostrarForm() {
+  const c = document.getElementById('jc');
+  c.innerHTML = `
+    <div class="panel corner-deco animate-up" style="padding:1.5rem;">
+      <div class="label" style="margin-bottom:1rem;">REGISTRO DE GRUPO</div>
+      <div style="margin-bottom:1rem;">
+        <label style="font-family:var(--font-mono);font-size:11px;color:var(--uv-cyan);letter-spacing:1px;display:block;margin-bottom:6px;">NOMBRE DEL GRUPO</label>
+        <input id="jn" type="text" placeholder="Ej: Grupo Alpha" maxlength="30"
+          style="width:100%;padding:0.7rem 1rem;background:rgba(0,20,51,0.8);border:1px solid rgba(0,212,255,0.3);border-radius:8px;color:#e8f4ff;font-family:var(--font-body);font-size:0.95rem;outline:none;"
+          onfocus="this.style.borderColor='rgba(0,212,255,0.7)'" onblur="this.style.borderColor='rgba(0,212,255,0.3)'">
       </div>
-    </div>
-    <button onclick="window.jugador_registrar()" style="width:100%;padding:0.9rem;background:#c9a84c;color:#1a1208;border:none;border-radius:8px;font-size:1rem;font-weight:700;">
-      Registrar grupo y unirse
-    </button>`;
+      <div style="margin-bottom:1.2rem;">
+        <label style="font-family:var(--font-mono);font-size:11px;color:var(--uv-cyan);letter-spacing:1px;display:block;margin-bottom:6px;">INTEGRANTES DEL GRUPO</label>
+        <div id="le" style="max-height:240px;overflow-y:auto;background:rgba(0,9,26,0.5);border:1px solid rgba(0,212,255,0.15);border-radius:8px;padding:0.4rem;">
+          ${ESTUDIANTES.map(e=>`
+            <label style="display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:5px;cursor:pointer;">
+              <input type="checkbox" value="${e}" style="accent-color:var(--uv-cyan);width:15px;height:15px;">
+              <span style="font-size:0.8rem;color:rgba(200,220,255,0.8);">${e}</span>
+            </label>`).join('')}
+        </div>
+      </div>
+      <button onclick="window.jRg()" class="btn-primary" style="width:100%;padding:0.9rem;font-size:0.9rem;">
+        REGISTRAR GRUPO →
+      </button>
+    </div>`;
 }
 
-window.jugador_registrar = async () => {
-  const nombre = document.getElementById('j-nombre-grupo').value.trim();
-  if (!nombre) { alert('Escribe el nombre del grupo'); return; }
-  const checks = document.querySelectorAll('#lista-estudiantes input[type=checkbox]:checked');
-  const miembros = Array.from(checks).map(c => c.value);
-  if (miembros.length === 0) { alert('Selecciona al menos un integrante'); return; }
-
-  await update(ref(db, 'juego/grupos'), {
-    [nombre]: { miembros }
-  });
-
-  iniciarVistaJuego(nombre);
+window.jRg = async () => {
+  const n = document.getElementById('jn').value.trim();
+  if (!n) { alert('Escribe el nombre del grupo'); return; }
+  const mb = Array.from(document.querySelectorAll('#le input:checked')).map(c=>c.value);
+  if (mb.length === 0) { alert('Selecciona al menos un integrante'); return; }
+  await update(ref(db,'juego/grupos'), { [n]: { miembros: mb, reglasAceptadas: false } });
+  mostrarReglas(n, mb);
 };
 
-function iniciarVistaJuego(grupo) {
-  const cont = document.getElementById('j-contenido');
-  const idx = Object.keys(estadoLocal.grupos || {}).length % COLORES_GRUPO.length;
-  const color = COLORES_GRUPO[idx];
-  let respondioEsta = {};
+function mostrarReglas(grupo, miembros) {
+  const c = document.getElementById('jc');
+  c.innerHTML = `
+    <div class="panel corner-deco animate-up" style="padding:1.5rem;">
+      <div style="text-align:center;margin-bottom:1.2rem;">
+        <div class="label" style="margin-bottom:4px;">REGLAMENTO DEL PARCIAL</div>
+        <div style="font-family:var(--font-display);font-size:1rem;color:var(--uv-gold);">${grupo}</div>
+      </div>
+      <div style="margin-bottom:1.2rem;">
+        ${REGLAS.map(r=>`
+          <div class="rule-item">
+            <span class="rule-icon">${r.icon}</span>
+            <div class="rule-text">
+              <strong>${r.title}</strong><br>${r.text}
+            </div>
+          </div>`).join('')}
+      </div>
+      <div style="background:rgba(0,48,135,0.2);border:1px solid rgba(0,212,255,0.2);border-radius:8px;padding:0.8rem;margin-bottom:1rem;font-size:0.82rem;color:rgba(200,220,255,0.7);text-align:center;">
+        Al aceptar confirmas que tu grupo leyó y entendió las reglas.
+      </div>
+      <button onclick="window.jAceptar('${grupo}')" class="btn-primary" style="width:100%;padding:0.9rem;font-size:0.9rem;background:linear-gradient(135deg,#006622,var(--uv-green));">
+        ✓ ACEPTAR REGLAS Y CONTINUAR
+      </button>
+    </div>`;
+}
 
-  cont.innerHTML = `
-    <div style="text-align:center;margin-bottom:1.2rem;">
-      <div style="font-size:10px;color:#6b6050;letter-spacing:1px;margin-bottom:4px;">JUGANDO COMO</div>
-      <div style="font-size:1.6rem;font-weight:700;color:${color};margin-bottom:4px;">${grupo}</div>
-      <div id="j-pts" style="font-size:0.85rem;color:#8a7a60;">0 pts</div>
+window.jAceptar = async (grupo) => {
+  await update(ref(db,`juego/grupos/${grupo}`), { reglasAceptadas: true });
+  esperarInicio(grupo);
+};
+
+function esperarInicio(grupo) {
+  const c = document.getElementById('jc');
+  const color = GRUP_COLORS[Object.keys(estado.grupos||{}).length % GRUP_COLORS.length];
+  c.innerHTML = `
+    <div class="panel corner-deco animate-up" style="padding:2rem;text-align:center;">
+      <div class="label" style="margin-bottom:0.8rem;">GRUPO REGISTRADO</div>
+      <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:900;color:${color};letter-spacing:2px;text-shadow:0 0 20px ${color}50;margin-bottom:0.5rem;">${grupo}</div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--uv-cyan);margin-bottom:2rem;">REGLAS ACEPTADAS ✓</div>
+      <div style="font-size:3rem;margin-bottom:1rem;">⏳</div>
+      <div style="font-family:var(--font-display);font-size:0.85rem;color:rgba(200,220,255,0.6);letter-spacing:1px;">ESPERANDO QUE EL PROFESOR<br>AUTORICE EL INICIO</div>
+      <div style="margin-top:1.5rem;display:flex;justify-content:center;gap:6px;">
+        <span class="pulse-dot"></span><span class="pulse-dot" style="animation-delay:0.3s"></span><span class="pulse-dot" style="animation-delay:0.6s"></span>
+      </div>
+    </div>`;
+
+  // Escuchar el inicio
+  onValue(gameRef, s => {
+    const d = s.val() || {};
+    estado = d;
+    if (d.estado === 'reglas') {
+      mostrarReglasSoloLectura(grupo, color);
+    } else if (d.estado === 'jugando') {
+      jugar(grupo, color);
+    }
+  });
+}
+
+function mostrarReglasSoloLectura(grupo, color) {
+  const c = document.getElementById('jc');
+  if (c.dataset.view === 'reglas_lectura') return;
+  c.dataset.view = 'reglas_lectura';
+  c.innerHTML = `
+    <div class="panel corner-deco animate-up" style="padding:1.5rem;">
+      <div style="text-align:center;margin-bottom:1rem;">
+        <div class="label" style="margin-bottom:4px;">REGLAMENTO</div>
+        <div style="font-family:var(--font-display);font-size:1rem;color:${color};">${grupo}</div>
+      </div>
+      ${REGLAS.map(r=>`
+        <div class="rule-item">
+          <span class="rule-icon">${r.icon}</span>
+          <div class="rule-text"><strong>${r.title}</strong><br>${r.text}</div>
+        </div>`).join('')}
+      <div style="text-align:center;margin-top:1.2rem;font-family:var(--font-mono);font-size:11px;color:var(--uv-gold);">EL PARCIAL INICIARÁ EN CUALQUIER MOMENTO...</div>
+    </div>`;
+}
+
+function jugar(grupo, colorParam) {
+  const c = document.getElementById('jc');
+  if (c.dataset.view === 'jugando') return;
+  c.dataset.view = 'jugando';
+  const color = colorParam || GRUP_COLORS[0];
+  let respondio = {};
+  let timerJugador = null;
+
+  c.innerHTML = `
+    <div style="text-align:center;margin-bottom:1rem;">
+      <div class="label" style="margin-bottom:4px;">JUGANDO COMO</div>
+      <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:900;color:${color};letter-spacing:2px;text-shadow:0 0 20px ${color}50;">${grupo}</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:6px;">
+        <div id="jp" style="font-family:var(--font-mono);font-size:0.85rem;color:var(--uv-cyan);">0 PTS</div>
+        <div id="jcombo" style="display:none;"></div>
+      </div>
     </div>
-    <div id="j-estado" style="font-size:0.9rem;color:#8a7a60;text-align:center;margin-bottom:1rem;">Esperando que el profesor inicie...</div>
-    <div id="j-zona-pregunta"></div>`;
+    <div id="je" style="text-align:center;font-family:var(--font-mono);font-size:11px;color:rgba(0,212,255,0.5);margin-bottom:0.8rem;letter-spacing:1px;"></div>
+    <!-- Mini timer -->
+    <div id="jtimer-wrap" style="display:none;text-align:center;margin-bottom:0.8rem;">
+      <svg width="60" height="60" class="timer-ring"><circle class="timer-circle-bg" cx="30" cy="30" r="25"/><circle id="jtimer-circle" class="timer-circle" cx="30" cy="30" r="25" stroke="var(--uv-cyan)" stroke-dasharray="157.08" stroke-dashoffset="0"/></svg>
+      <div id="jtimer-num" style="position:absolute;margin-top:-46px;margin-left:0;width:60px;font-family:var(--font-display);font-weight:900;font-size:1.1rem;color:var(--uv-cyan);text-align:center;display:block;"></div>
+    </div>
+    <div id="jz"></div>`;
 
-  onValue(ref(db,'juego'), snap => {
-    const d = snap.val() || {};
-    estadoLocal = d;
+  onValue(gameRef, s => {
+    const d = s.val() || {};
+    estado = d;
     const qi = d.preguntaActual ?? -1;
-    const zona = document.getElementById('j-zona-pregunta');
-    const estado = document.getElementById('j-estado');
-    const pts = document.getElementById('j-pts');
+    const zona = document.getElementById('jz');
+    const est = document.getElementById('je');
+    const ptsEl = document.getElementById('jp');
+    const comboEl = document.getElementById('jcombo');
     if (!zona) return;
 
-    if (pts) pts.textContent = `${d.puntajes?.[grupo] || 0} pts`;
+    const miPts = d.puntajes?.[grupo] || 0;
+    if (ptsEl) ptsEl.textContent = `${miPts} PTS`;
+
+    // Combo badge
+    const miCombo = d.combos?.[grupo] || 0;
+    if (comboEl) {
+      if (miCombo >= 2) {
+        const mult = getComboMult(miCombo);
+        comboEl.style.display = 'inline-flex';
+        comboEl.className = 'combo-badge';
+        comboEl.innerHTML = `🔥 COMBO ×${mult.toFixed(2)} <span style="font-family:var(--font-mono);font-size:10px;">(${miCombo} seguidas)</span>`;
+      } else {
+        comboEl.style.display = 'none';
+      }
+    }
 
     if (d.estado === 'esperando' || qi < 0) {
-      if (estado) estado.textContent = 'Esperando inicio del profesor...';
+      if (est) est.textContent = 'ESPERANDO INICIO...';
       zona.innerHTML = '';
       return;
     }
 
     if (d.estado === 'ranking') {
-      const puntajes = d.puntajes || {};
-      const ordenados = Object.entries(puntajes).sort((a,b)=>b[1]-a[1]);
-      const miPos = ordenados.findIndex(([g])=>g===grupo)+1;
-      const misPts = puntajes[grupo]||0;
-      const maxPts = PREGUNTAS.length * 100;
-      const nota = Math.round((misPts / maxPts) * 5 * 10) / 10;
-      if (estado) estado.textContent = '';
+      if (timerJugador) { clearInterval(timerJugador); timerJugador = null; }
+      const timerWrap = document.getElementById('jtimer-wrap');
+      if (timerWrap) timerWrap.style.display = 'none';
+      const pp = d.puntajes||{}, or = Object.entries(pp).sort((a,b)=>b[1]-a[1]);
+      const mp = or.findIndex(([g])=>g===grupo)+1;
+      const ms = pp[grupo]||0, nt = getNota(mp);
+      if (est) est.textContent = '';
       zona.innerHTML = `
-        <div style="text-align:center;padding:1.5rem 0;">
-          <div style="font-size:2.5rem;margin-bottom:0.5rem;">🏆</div>
-          <div style="font-size:1.4rem;color:#c9a84c;margin-bottom:0.3rem;">${grupo}</div>
-          <div style="font-size:2.8rem;font-weight:700;color:#f0ead8;">${misPts}</div>
-          <div style="font-size:0.85rem;color:#8a7a60;margin-bottom:0.3rem;">puntos · Puesto ${miPos}</div>
-          <div style="font-size:1.5rem;font-weight:700;color:${nota>=3?'#7dcf90':'#e07070'};margin-bottom:1.5rem;">Nota: ${nota.toFixed(1)} / 5.0</div>
-          <div style="font-size:10px;color:#4a4030;letter-spacing:1px;margin-bottom:0.8rem;">RANKING FINAL</div>
-          ${ordenados.map(([g,p],i)=>`
-            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e1c14;font-size:0.85rem;">
-              <span style="color:${g===grupo?'#c9a84c':'#8a7a60'}">${i+1}. ${g}</span>
-              <span style="color:${g===grupo?'#f0ead8':'#6b6050'}">${p} pts</span>
+        <div class="panel corner-deco animate-up" style="padding:2rem;text-align:center;">
+          <div class="label" style="margin-bottom:0.8rem;">RESULTADO FINAL</div>
+          <div style="font-family:var(--font-display);font-size:1.3rem;color:${color};margin-bottom:0.4rem;">${grupo}</div>
+          <div style="font-family:var(--font-display);font-size:3rem;font-weight:900;color:#fff;line-height:1;">${ms}</div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--uv-cyan);margin-bottom:0.3rem;">PUNTOS · PUESTO ${mp}°</div>
+          <div style="font-family:var(--font-display);font-size:2.5rem;font-weight:900;color:${nt>=3?'#00ff88':'#ff6b6b'};margin:0.8rem 0 1.5rem;text-shadow:0 0 20px ${nt>=3?'rgba(0,255,136,0.4)':'rgba(255,107,107,0.4)'};">NOTA: ${nt.toFixed(1)}</div>
+          <div class="label" style="margin-bottom:0.8rem;">RANKING FINAL</div>
+          ${or.map(([g,p],i)=>`
+            <div style="display:flex;justify-content:space-between;padding:6px 8px;border-radius:6px;margin-bottom:3px;background:${g===grupo?'rgba(0,48,135,0.4)':'transparent'};border:1px solid ${g===grupo?'rgba(0,212,255,0.2)':'transparent'};">
+              <span style="font-family:var(--font-mono);font-size:11px;color:${i===0?'var(--uv-gold)':g===grupo?'var(--uv-cyan)':'rgba(200,220,255,0.6)'}">${i+1}°. ${g}</span>
+              <span style="font-family:var(--font-display);font-size:11px;font-weight:700;color:${g===grupo?'#fff':'rgba(200,220,255,0.4)'};">${getNota(i+1).toFixed(1)}</span>
             </div>`).join('')}
         </div>`;
       return;
@@ -440,55 +811,94 @@ function iniciarVistaJuego(grupo) {
     const q = PREGUNTAS[qi];
     if (!q) return;
 
-    if (estado) estado.textContent = `Pregunta ${qi+1} de ${PREGUNTAS.length} · ${q.tema}`;
+    if (est) est.textContent = `PREGUNTA ${qi+1} DE ${PREGUNTAS.length} · ${q.t}`;
 
-    const yaRespondio = d.respuestas?.[qi]?.[grupo] !== undefined;
-    if (yaRespondio || respondioEsta[qi]) {
-      const resp = d.respuestas?.[qi]?.[grupo];
-      const ok = resp && resp.opcion === q.correcta;
+    // Iniciar timer local del jugador
+    const timerWrap = document.getElementById('jtimer-wrap');
+    if (timerWrap && d.timerStart && !respondio[qi]) {
+      timerWrap.style.display = 'block';
+      if (timerJugador) clearInterval(timerJugador);
+      const circleEl = document.getElementById('jtimer-circle');
+      const numEl = document.getElementById('jtimer-num');
+      const circ = 157.08;
+      timerJugador = setInterval(() => {
+        const elapsed = (Date.now() - d.timerStart) / 1000;
+        const rem = Math.max(0, TIMER_SECS - elapsed);
+        if (numEl) numEl.textContent = Math.ceil(rem);
+        if (circleEl) {
+          circleEl.style.strokeDashoffset = circ * (1 - rem/TIMER_SECS);
+          circleEl.style.stroke = rem <= 5 ? 'var(--uv-red)' : rem <= 15 ? 'var(--uv-gold)' : 'var(--uv-cyan)';
+        }
+        if (rem <= 0) { clearInterval(timerJugador); timerJugador = null; }
+      }, 250);
+    }
+
+    const yaR = d.respuestas?.[qi]?.[grupo] !== undefined;
+    if (yaR || respondio[qi]) {
+      if (timerJugador) { clearInterval(timerJugador); timerJugador = null; }
+      if (timerWrap) timerWrap.style.display = 'none';
+      const r = d.respuestas?.[qi]?.[grupo];
+      const ok = r && r.opcion === q.c;
+      const puntos = r ? r.puntos : 0;
+      const mult = r ? r.mult : 1;
       zona.innerHTML = `
-        <div style="text-align:center;padding:1.5rem 0;">
-          <div style="font-size:3rem;margin-bottom:0.5rem;">${ok?'✅':'❌'}</div>
-          <div style="font-size:1rem;color:${ok?'#7dcf90':'#e07070'};margin-bottom:0.5rem;">${ok?'¡Correcto! +100 pts':'Incorrecto'}</div>
-          ${ok?'':'<div style="font-size:0.8rem;color:#8a7a60;margin-bottom:0.3rem;">Respuesta correcta: '+(String.fromCharCode(65+q.correcta))+') '+q.opciones[q.correcta]+'</div>'}
-          <div style="font-size:0.8rem;color:#4a4030;margin-top:0.8rem;">Esperando siguiente pregunta...</div>
+        <div class="${ok?'result-correct':'result-wrong'} animate-up">
+          <div style="font-size:2.5rem;margin-bottom:0.5rem;">${ok?'✅':'❌'}</div>
+          <div style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:${ok?'#00ff88':'#ff6b6b'};margin-bottom:0.4rem;">${ok?'¡CORRECTO!':'INCORRECTO'}</div>
+          ${ok?`<div style="font-family:var(--font-display);font-size:1.8rem;font-weight:900;color:var(--uv-gold);margin-bottom:0.3rem;">+${puntos} PTS</div>
+          ${mult>1?`<div class="combo-badge" style="display:inline-flex;margin:0.3rem auto 0.5rem;">🔥 COMBO ×${mult.toFixed(2)}</div>`:''}
+          `:'<div style="font-size:0.8rem;color:rgba(200,220,255,0.6);margin-bottom:0.4rem;">Correcta: <strong style="color:var(--uv-cyan)">${String.fromCharCode(65+q.c)}) ${q.o[q.c]}</strong></div>'}
+          <div style="font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.4);margin-top:0.8rem;letter-spacing:1px;">ESPERANDO SIGUIENTE PREGUNTA...</div>
         </div>`;
-      respondioEsta[qi] = true;
+      respondio[qi] = true;
       return;
     }
 
     zona.innerHTML = `
-      <div style="background:#141728;border:1px solid #2a2e42;border-radius:10px;padding:1rem;margin-bottom:1rem;font-size:0.95rem;line-height:1.6;">
-        ${q.pregunta}
+      <div class="panel corner-deco animate-up" style="padding:1.2rem;margin-bottom:0.8rem;">
+        <div style="font-size:0.95rem;line-height:1.6;color:#f0f8ff;">${q.p}</div>
       </div>
       <div style="display:grid;gap:0.5rem;">
-        ${q.opciones.map((op,i)=>`
-          <button onclick="window.jugador_responder('${grupo}',${qi},${i})"
-            style="padding:0.8rem;background:#141728;border:1px solid #3a3520;border-radius:8px;color:#f0ead8;font-size:0.9rem;font-family:Georgia,serif;text-align:left;line-height:1.4;">
-            <span style="color:#c9a84c;font-weight:700;">${String.fromCharCode(65+i)})</span> ${op}
+        ${q.o.map((op,i)=>`
+          <button onclick="window.jRs('${grupo}',${qi},${i})" class="answer-btn" id="abtn-${i}">
+            <span class="letter-badge">${String.fromCharCode(65+i)}</span><span>${op}</span>
           </button>`).join('')}
       </div>`;
   });
 }
 
-window.jugador_responder = async (grupo, qi, opcion) => {
-  const d = estadoLocal;
+window.jRs = async (grupo, qi, op) => {
+  const d = estado;
   if (d.respuestas?.[qi]?.[grupo] !== undefined) return;
-  const ok = opcion === PREGUNTAS[qi].correcta;
-  const ptsActual = d.puntajes?.[grupo] || 0;
-  const updates = {};
-  updates[`respuestas/${qi}/${grupo}`] = { opcion };
-  if (ok) updates[`puntajes/${grupo}`] = ptsActual + 100;
-  await update(ref(db,'juego'), updates);
+
+  // Calcular posición (cuántos ya respondieron)
+  const yaResp = Object.keys(d.respuestas?.[qi] || {}).length;
+  const posicion = yaResp + 1; // 1-indexed
+
+  // Obtener combo actual
+  const comboActual = d.combos?.[grupo] || 0;
+  const newStreak = posicion <= 3 ? comboActual + 1 : 0;
+  const mult = posicion <= 3 ? getComboMult(newStreak) : 1.0;
+
+  const ok = op === PREGUNTAS[qi].c;
+  const puntos = ok ? calcPuntos(posicion, newStreak) : 0;
+  const paBase = d.puntajes?.[grupo] || 0;
+
+  const u = {};
+  u[`respuestas/${qi}/${grupo}`] = { opcion: op, posicion, puntos, mult: posicion <= 3 ? mult : 1.0 };
+  if (ok) u[`puntajes/${grupo}`] = paBase + puntos;
+  u[`combos/${grupo}`] = posicion <= 3 ? newStreak : 0;
+  await update(gameRef, u);
+
+  // Deshabilitar botones
+  document.querySelectorAll('.answer-btn').forEach(b => b.classList.add('answered'));
 };
 
-// ── INIT ──────────────────────────────────────────────────────────────
-const view = getView();
-if (view === 'profesor') renderProfesor();
-else if (view === 'jugador') renderJugador();
+// ── INIT ──────────────────────────────────────────────────────────────────────
+const v = getView();
+if (v === 'profesor') renderProfesor();
+else if (v === 'jugador') renderJugador();
 else renderInicio();
-
-onValue(ref(db,'juego'), snap => { estadoLocal = snap.val() || {}; });
 </script>
 </body>
 </html>
