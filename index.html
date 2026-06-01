@@ -848,15 +848,19 @@ function jugar(grupo, colorParam) {
       const ok = r && r.opcion === q.c;
       const puntos = r ? r.puntos : 0;
       const mult = r ? r.mult : 1;
-      zona.innerHTML = `
-        <div class="${ok?'result-correct':'result-wrong'} animate-up">
-          <div style="font-size:2.5rem;margin-bottom:0.5rem;">${ok?'✅':'❌'}</div>
-          <div style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:${ok?'#00ff88':'#ff6b6b'};margin-bottom:0.4rem;">${ok?'¡CORRECTO!':'INCORRECTO'}</div>
-          ${ok?`<div style="font-family:var(--font-display);font-size:1.8rem;font-weight:900;color:var(--uv-gold);margin-bottom:0.3rem;">+${puntos} PTS</div>
-          ${mult>1?`<div class="combo-badge" style="display:inline-flex;margin:0.3rem auto 0.5rem;">🔥 COMBO ×${mult.toFixed(2)}</div>`:''}
-          `:'<div style="font-size:0.8rem;color:rgba(200,220,255,0.6);margin-bottom:0.4rem;">Correcta: <strong style="color:var(--uv-cyan)">${String.fromCharCode(65+q.c)}) ${q.o[q.c]}</strong></div>'}
-          <div style="font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.4);margin-top:0.8rem;letter-spacing:1px;">ESPERANDO SIGUIENTE PREGUNTA...</div>
-        </div>`;
+      const letraCorrecta = String.fromCharCode(65 + q.c);
+      const textoCorrecta = q.o[q.c];
+      const extraOk = ok
+        ? '<div style="font-family:var(--font-display);font-size:1.8rem;font-weight:900;color:var(--uv-gold);margin-bottom:0.3rem;">+' + puntos + ' PTS</div>'
+          + (mult > 1 ? '<div class="combo-badge" style="display:inline-flex;margin:0.3rem auto 0.5rem;">🔥 COMBO ×' + mult.toFixed(2) + '</div>' : '')
+        : '<div style="font-size:0.85rem;color:rgba(200,220,255,0.7);margin-bottom:0.4rem;">Respuesta correcta: <strong style="color:var(--uv-cyan)">' + letraCorrecta + ') ' + textoCorrecta + '</strong></div>';
+      zona.innerHTML =
+        '<div class="' + (ok ? 'result-correct' : 'result-wrong') + ' animate-up">'
+        + '<div style="font-size:2.5rem;margin-bottom:0.5rem;">' + (ok ? '✅' : '❌') + '</div>'
+        + '<div style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:' + (ok ? '#00ff88' : '#ff6b6b') + ';margin-bottom:0.4rem;">' + (ok ? '¡CORRECTO!' : 'INCORRECTO') + '</div>'
+        + extraOk
+        + '<div style="font-family:var(--font-mono);font-size:10px;color:rgba(0,212,255,0.4);margin-top:0.8rem;letter-spacing:1px;">ESPERANDO SIGUIENTE PREGUNTA...</div>'
+        + '</div>';
       respondio[qi] = true;
       return;
     }
